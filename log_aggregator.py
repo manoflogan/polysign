@@ -1,5 +1,9 @@
 """
 This module represents a single point of entry into the log module classes.
+
+Invoking the log aggregator is given below:
+
+    python log_aggregator.py -f <fully qualified file path to log file>
 """
 
 import argparse

@@ -18,11 +18,16 @@ class RequestAggregator(object):
     """Aggregates all the request metrics associated with a request."""
 
     def __init__(self):
-        self.total_requests_by_date = collections.defaultdict(list)
-        self.total_errors_by_date = collections.defaultdict(list)
-        self.total_requests_by_user = collections.defaultdict(list)
-        self.total_errors_by_user = collections.defaultdict(list)
+        self.total_requests_by_date = collections.OrderedDict()
+        self.total_errors_by_date = collections.OrderedDict()
+        self.total_requests_by_user = collections.OrderedDict()
+        self.total_errors_by_user = collections.OrderedDict()
         self.number_of_uniques = collections.OrderedDict()
+
+    def __init_list_or_append(self, ordered_dict, key, value):
+        a_list = ordered_dict.get(key, [])
+        a_list.append(value)
+        ordered_dict[key] = a_list
 
     def initialise_datasets(self, date_object, user_id, status):
         """Initialies the data sets based on th date objects, user id and status.
@@ -41,11 +46,15 @@ class RequestAggregator(object):
         """
         # status has to be 200.
         if status != '200':
-            self.total_errors_by_date[date_object].append(user_id)
-            self.total_errors_by_user[user_id].append(date_object)
+            self.__init_list_or_append(
+                self.total_errors_by_date, date_object, user_id)
+            self.__init_list_or_append(
+                self.total_errors_by_user, user_id, date_object)
 
-        self.total_requests_by_date[date_object].append(user_id)
-        self.total_requests_by_user[user_id].append(date_object)
+        self.__init_list_or_append(
+            self.total_requests_by_date, date_object, user_id)
+        self.__init_list_or_append(
+            self.total_requests_by_user, user_id, date_object)
 
     @property
     def total_requests(self):
@@ -74,11 +83,9 @@ class RequestAggregator(object):
         """Returns the total unique number of days between two date ranges;
         both dates inclusive
         """
-        sorted_iteritems = sorted(
-            self.total_requests_by_date.items(), key=lambda x: x[0])
+        items = list(self.total_requests_by_date.items())
         # Min and max date
-        min_date = sorted_iteritems[0][0]
-        max_date = sorted_iteritems[-1][0]
+        min_date, max_date = items[0][0], items[-1][0]
         number_of_days = (max_date - min_date).days + 1
 
         logging.info('Aggregating all requests by date.')

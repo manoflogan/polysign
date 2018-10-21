@@ -42,18 +42,27 @@ For example, the output from sample.log should give you the following. Please do
 Totals
 ------
 Requests 4
+
 Errors 1
+
 Days 5
+
 Unique Users 2
 
 Daily Uniques
 -------------
 2018-01-01 2
+
 2018-01-02 0
+
 2018-01-03 1
+
 2018-01-04 0
+
 2018-01-05 1
 
 
 # Additional Notes
-The program should take a single command line argument specifying the log file to read.
+The program should take a single command line argument specifying the log file to read. The main module is invoked as follows:
+
+`python log_aggregator.py -f <fully_qualified_path of the logfile>`

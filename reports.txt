@@ -1,0 +1,15 @@
+{% block body %}
+Totals
+------
+
+Requests {{ total_requests }}
+Errors {{total_errors }}
+Days {{ number_of_days }}
+Unique Users {{ unique_users }}
+
+Daily uniques
+-------------
+{% for unique, value in daily_uniques.items() %}
+{{ unique }} {{ value }}
+{% endfor %}
+{% endblock %}
